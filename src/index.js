@@ -101,7 +101,7 @@ const getUnvisit = (entities) => {
 };
 
 const getEntities = (entities) => {
-  const isImmutable = ImmutableUtils.isImmutable(entities);
+  const isImmutable = typeof entities !== 'function' && ImmutableUtils.isImmutable(entities);
 
   return (entityOrId, schema) => {
     const schemaKey = schema.key;
@@ -110,6 +110,9 @@ const getEntities = (entities) => {
       return entityOrId;
     }
 
+    if (typeof entities === 'function') {
+      return entities(schemaKey, entityOrId);
+    }
     return isImmutable ?
       entities.getIn([ schemaKey, entityOrId.toString() ]) :
       entities[schemaKey][entityOrId];
